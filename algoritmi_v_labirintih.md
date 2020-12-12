@@ -43,7 +43,7 @@ S pomočjo zgornjega grafa lahko določimo eno od možnih poti od vhoda v labiri
 
 ---
 
-Zgoraj smo si ogledali preprost primer labirinta brez krožnih poti. Ker labirint ni imel krožnih poti, je bil pripadajoči graf brez ciklov. Zato si za boljše razumevaje predstavitve labirinta z grafom oglejmo še primer labirinta s krožnimi potmi.
+Zgoraj smo si ogledali preprost primer labirinta brez krožnih poti. Ker labirint ni imel krožnih poti, je bil pripadajoči graf brez ciklov (torej dervo). Zato si za boljše razumevaje predstavitve labirinta z grafom oglejmo še primer labirinta s krožnimi potmi.
 
 
 ## Labirint s krožnimi potmi
@@ -56,7 +56,7 @@ Ponovimo že znani postopek številčenja hodnikov.
 
 <img src="./dodatne_slike/lab_2_ostevilcen.jpg" width="300" >
 
-Ugotovimo, da je en hodnik lahko označen z več številkami. To se zgodi samo pri nekaterih hodnikih, ki so del krožnih poti labirinta, kar pa na samo predstavitev labirinta z grafom ne vpliva. Če bi želeli poiskti najdaljšo oz. najkrajšo pot v labirintu s pomočjo grafa, bi preprosto upoštevali dolžine "hodnikov". Opazimo, da skupna vsota dolžin "hodnikov" znotraj enega hodnika v labirintu še vedno ustreza dejanski dolžini tega hodnika. Na primer hodnik označen s `6` in `15` je dolg `5` enot, pri čemer opazimo, da "hodnik" označen s `6` ustreza `1` enoti, "hodnik" označen s `15` pa `4` enotam. Torej je skupna vsota še res enaka: `1 + 4 = 5`.
+Ugotovimo, da je en hodnik lahko označen z več številkami. To se zgodi samo pri nekaterih hodnikih, ki so del krožnih poti labirinta, kar pa na samo predstavitev labirinta z grafom ne vpliva. Če bi želeli poiskti najdaljšo oz. najkrajšo pot v labirintu s pomočjo grafa, bi preprosto upoštevali dolžine "hodnikov". Opazimo, da skupna vsota dolžin "hodnikov" znotraj enega hodnika v labirintu še vedno ustreza dejanski dolžini tega hodnika. Na primer hodnik označen s `6` in `15` je dolg `5` enot, pri čemer opazimo, da "hodnik" označen s `6` ustreza `1` enoti, "hodnik" označen s `15` pa `4` enotam. Torej je skupna vsota še res enaka: `1 + 4 = 5`. Seveda se lahko deljenemu številčenju hodnikov izognemo z uporabo drugačnega algoritma za številčenje, vendar prepustimo ta razmislek `bralcu za vajo`.
 
 Dan labirint predstavimo z grafom:
 
@@ -66,7 +66,14 @@ Spomnimo se, da iščemo pot od vozlišča `1` do vozlišča `9`. Opazimo, da im
 
 <img src="./dodatne_slike/lab_2_graf_pot.jpg" width="300" >
 
+Opazimo, da so nekatere izmed možnih poti:
+* `1 -> 3 -> 4 -> 7 -> 9`
+* `1 -> 3 -> 4 -> 8 -> 17 -> 12 -> 10 -> 7 -> 9`
+* `1 -> 3 -> 4 -> 8 -> 17 -> 12 -> 10 -> 7 -> 4 -> 3 -> 5 -> 16 -> 13 -> 11 -> 10 -> 7 -> 9`
+* `1 -> 3 -> 6 -> 15 -> 13 -> 16 -> 5 -> 3 -> 4 -> 8 -> 17 -> 12 -> 10 -> 7 -> 9`
+* `1 -> 3 -> 6 -> 15 -> 13 -> 16 -> 5 -> 3 -> 6 -> 15 -> 13 -> 16 -> 5 -> 3 -> 4 -> 7 -> 9`
 
+Spomnimo se, da v cikličnih grafih obstaja možnost, da se nekaj časa sprehajamo po nekem ciklu, kar v našem primeru labirinta občutno podaljša pot med vhodom in izhodom.
 
 
 Preden se lotimo preiskovalnih algoritmov, si poglejmo, kako lahko graf predstavimo.
@@ -152,16 +159,16 @@ def naš_algoritem(G, koren):  # G je tabela sosednosti za graf
 
 Kot že ime pove, ta algoritem deluje na principu pregledovanja v globino. Temelji na `vračanju po isti poti` - pregleda vsa vozlišča s premikanjem naprej v globino grafa, če je le to možno, sicer se vrača do prvega vozlišča, kjer se ponovno lahko premakne globje.
 
-Za boljšo predstavo, si oglejmo ta algoritem na grafu za naš labirint.
+Za boljšo predstavo, si oglejmo ta algoritem na grafu za naš preprost labirint brez krožnih poti.
 
 **Primer:** Iskanje v globino začne preiskovanje v poljubnem (izbranem) vozlišču. Pri preiskovanju celotnega grafa se drži pravil:
 1. v vozlišču z več povezavami (kjer ima možnost izbire poti) se loti preiskovanja *najbolj desne* nepregledne veje (tj. najbolj levega sina);
    
-   <img src="./slike/izbira1.png" width="400" >
+   <img src="./slike/izbira1.png" width="300" >
 
 2. ko pride v vozlišče z vsemi pregledanimi povezavami, se vrača nazaj po preiskani poti do prvega vozlišča z nepregledano povezavo;
    
-   <img src="./slike/izbira2.png" width="400" >
+   <img src="./slike/izbira2.png" width="300" >
 
 3. ko pregleda celoten graf, se ustavi.
 
@@ -169,21 +176,38 @@ Za boljšo predstavo, si oglejmo ta algoritem na grafu za naš labirint.
 
 Poglejmo si enega izmed možnih pregledov grafa z uporabo iskanja v globino (barvne številke):
 
-<img src="./slike/pricakovan_pregled.png" width="400" >
+<img src="./slike/pricakovan_pregled.png" width="300" >
 
 
 ### Katero podatkovno strukturo moramo uporabiti za iskanje v globino?
 
-Na primeru si oglejmo delovanje algoritma:
+Na enostavnem primeru si oglejmo delovanje algoritma:
 
-<img src="./slike/pregled_1.png" width="300" >
-<img src="./slike/pregled_2.png" width="300" >
-<img src="./slike/pregled_3.png" width="300" >
-<img src="./slike/pregled_4.png" width="300" >
-<img src="./slike/pregled_5.png" width="300" >
-<img src="./slike/pregled_6.png" width="300" >
-<img src="./slike/pregled_7.png" width="300" >
-<img src="./slike/pregled_8.png" width="300" >
+1. Dan imamo graf `G` in koren `1`:
+   
+   <img src="./slike/pregled_1.png" width="300" >
+2. Pregled začnemo v korenu. Torej `1` dodamo v `PS` in ga označimo kot obiskanega, zato ga dodamo v `obiskan`:
+   
+   <img src="./slike/pregled_2.png" width="300" >
+3. Vzamemo `1` iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Soseda sta `2` in `32`. Ker še nista bila obiskana, torej nista v `obiskan`, ju dodamo v `obiskan` in v `PS`:
+   
+   <img src="./slike/pregled_3.png" width="300" >
+4. Vzamemo zadnje vozlišče iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Torej sosedi od `2` so `1`, `4` in `61`. Ker je `1` že v `obiskan`, z njim ne naredimo ničesar. Torej samo vozlišči `4` in `61` dodamo v `obiskan` in v `PS`:
+   
+   <img src="./slike/pregled_4.png" width="300" >
+5. Ponovno vzamemo zadnje vozlišče iz `PS`, ga dodamo na `pot` in pogledamo njegovo sosede. Sesed od `4` je samo že obiskano vozlišče `2`, zato ne naredimo ničesar:
+   
+   <img src="./slike/pregled_5.png" width="300" >
+6. Vzamemo zadnjega iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Edini neobiskani sosed vozlišča `61` je `14`, zato le tega dodamo v `obiskan` in v `PS`:
+   
+   <img src="./slike/pregled_6.png" width="300" >
+7. Ponovno vzamemo zadnje vozlišče iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Opazimo, da trenutno vozlišče `14` nima neobiskanih sosedov, zato ne naredimo ničesar:
+   
+   <img src="./slike/pregled_7.png" width="300" >
+8.  Vzamemo zadnje vozlišče iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Opazimo, da trenutno vozlišče `32` nima neobiskanih sosedov, zato ponovno ne naredimo ničesar:
+   
+    <img src="./slike/pregled_8.png" width="300" >
+9. Opazimo, da je `PS` prazna, kar pomeni da smo pregledali celoten graf. Torej vemo, da je v `pot` iskana pot preiskovanja.
 
 Opazino, da mora podatkovna stuktura za algoritem iskanja v globino delovati na principu `zadnji noter, prvi ven`. Torej lahko uporabimo `sklad`.
 
@@ -194,48 +218,421 @@ Ker vemo, da bomo vsako vozlišče pregledali enkrat, prav tako tudi vsako povez
 
 ## Iskanje v širino
 
-Samo ime nam pove, da ta algoritem deluje na principu pregledovanja v širino. Torej `preiskuje po nivojih` - ko pregleda vsa vozlišča na neki globini, nadaljuje s pregledovanjem vozlišč na naslednji globini.
+Samo ime nam pove, da ta algoritem deluje na principu pregledovanja v širino. Torej `preiskuje po globinag` - ko pregleda vsa vozlišča na neki globini, nadaljuje s pregledovanjem vozlišč na naslednji globini.
 
 Za boljšo predstavo si algoritem oglejmo na našem grafu za labirint.
 
 **Primer:** Iskanje v globino začne preiskovanje v poljubnem (izbranem) vozlišču. Pri preiskovanju celotnega grafa se drži pravil:
-1. najprej se premika horizontalno in pregleda vsa vozlišča na trenutnem nivoju ter shrani njihove naslednike;
+1. najprej se premika horizontalno in pregleda vsa vozlišča na trenutni globini ter shrani njihove naslednike;
    
-   <img src="./slike/bfs1.png" width="400" >
+   <img src="./dodatne_slike/pregled_1.jpg" width="300" >
 
-2. premakne se na naslednji nivo;
+2. premakne se na naslednjo globino;
    
-   <img src="./slike/bfs2.png" width="400" >
-
+   <img src="./dodatne_slike/pregled_2.jpg" width="300" >
 3. ko pregleda celoten graf, se ustavi.
+   
+   <img src="./dodatne_slike/pregled_7.jpg" width="300" >
 
 *Opomba:* Če želimo v grafu najti nek točno določen element, sledimo zgornjemu postopku, le da se algoritem ustavi, ko najde iskani element oziroma preišče celoten graf (če taga elementa ni v grafu). Na ta način v danem grafu najdemo najkrajšo možno pot med korenom in iskanim vozliščem, dolžina pa predstavlja globino, na kateri se nahaja iskano vozlišče.
 
 Poglejmo si enega izmed možnih pregledov grafa z uporabo iskanja v globino (barvne številke):
 
-<img src="./slike/pricakovan_pregled_sirina.png" width="400" >
+<img src="./dodatne_slike/pregled_st.jpg" width="300" >
 
 
 ### Katero podatkovno strukturo moramo uporabiti za iskanje v širino?
 
-Na primeru si oglejmo delovanje algoritma:
+Na enostavnem primeru si oglejmo delovanje algoritma:
 
-<img src="./slike/pregled_1.png" width="300" >
-<img src="./slike/pregled_2.png" width="300" >
-<img src="./slike/pregled_3_bfs.png" width="300" >
-<img src="./slike/pregled_4_bfs.png" width="300" >
-<img src="./slike/pregled_5_bfs.png" width="300" >
-<img src="./slike/pregled_6_bfs.png" width="300" >
-<img src="./slike/pregled_7_bfs.png" width="300" >
-<img src="./slike/pregled_8_bfs.png" width="300" >
+1. Dan imamo graf `G` in koren `1`:
+   
+   <img src="./slike/pregled_1.png" width="300" >
+2. Pregled začnemo v korenu. Torej `1` dodamo v `PS` in ga označimo kot obiskanega, zato ga dodamo v `obiskan`:
+   
+   <img src="./slike/pregled_2.png" width="300" >
+3. Vzamemo `1` iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Soseda sta `2` in `32`. Ker še nista bila obiskana, torej nista v `obiskan`, ju dodamo v `obiskan` in v `PS`:
+   
+   <img src="./slike/pregled_3_bfs.png" width="300" >
+4. Vzamemo prvo vozlišče iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Torej soseda od `32` sta `1` in `14`. Ker je `1` že v `obiskan`, z njim ne naredimo nič. Torej samo vozlišče `14` dodamo v `obiskan` in v `PS`.
+   
+   <img src="./slike/pregled_4_bfs.png" width="300" >
+5. Vzamemo prvo vozlišče iz `PS`, ga dodamo na `pot` in ponovimo postopek iz `(2.)`. Torej sosedi od `2` so `1`, `4` in `61`. Ker je bilo vozlišče `1` že obiskani, z njim ne naredimo ničeran, torej dodamo v `obiskan` in v `PS` samo vozlišči `4` in `61`:
+   
+   <img src="./slike/pregled_5_bfs.png" width="300" >
+6. Ponovno vzamemo prvega iz `PS`, ga dodamo na `pot` in ponovimo postopek. Sodeda od `14` sta `61` in `32`, ker pa sta že oba v `obiskan`, ne naredimo ničesar:
+   
+   <img src="./slike/pregled_6_bfs.png" width="300" >
+7. Ponovno vzamemo prvega iz `PS`, ga dodamo na `pot` in pogledamo njegove sosede. Opazimo, da sta bila oba soseda od `61` že obiskana, zato ne naredimo ničesar:
+   
+   <img src="./slike/pregled_7_bfs.png" width="300" >
+8.  Vzamemo prvega iz `PS`, ga dodamo na `pot` in ugotovimo, da je bil njegov sosed (`2`) že obiskan, zato ne naredimo ničesar:
+   
+      <img src="./slike/pregled_8_bfs.png" width="300" >
+9.  Opazimo, da je `PS` prazna, torej vemo, da smo pregledali že celoten graf. Torej je v `pot` iskana pot preiskovanja.
 
 Opazimo, da mora podatkovna stuktura za algoritem iskanja v širino delovati na principu `prvi noter, prvi ven`. Torej lahko uporabimo `vrsto`.
 
 ### Časovna zahtevnost
- Ker vemo, da bomo vsako vozlišče pregledali enkrat, prav tako tudi vsako povezavo, je pričakovana časovna zahtevnost iskanja v globino `O(V + P)`, pri čemer je `V = število vozlišč grafa` in `P = število povezav grafa`, če graf predstavimo s tabelo sosednosti.
+Ker vemo, da bomo vsako vozlišče pregledali enkrat, prav tako tudi vsako povezavo, je `pričakovana` časovna zahtevnost iskanja v globino `O(V + P)`, pri čemer je `V = število vozlišč grafa` in `P = število povezav grafa`, če graf predstavimo s tabelo sosednosti.
+`
 
-*Iskanje v širino uporabimo predvsem pri iskanju najdaljše poti.*
+## Za kakšne grafe delujeta ta algoritma?
 
+Kot je bilo razvidno iz zgornjih primerov, algoritma delujeta na `cikličnih` in `acikličnih` grafih. Po krajšem premisleku ugotovimo, da delujeta tudi na `usmerjenih` grafih. Opazimo pa, da zgoraj opisana implementacija ni ustrezna za pregledovanje `večdelnih` grafov, saj v takem primeru pregledamo le tisti del, v katerem se nahaja `koren`.
+
+Če bi želeli pregledati celoten večdelni graf, bi morali vedeti, katera vozlišča tvorijo dani graf. Ko bi pri izvaljanju algoritma prišli do "konca", torej bi bila `PS` prazna, bi morali preveriti, ali je `množica obiskanih vozlišč enaka množici vseh vozlišč`. Če bi bili enaki, bi vedeli, da smo pregledali celoten graf, sicer pa bi vzeli neko še neobiskano vozlišče za novi `koren` in ponovili postopek. Tu bi se morali zavedati, da ob "koncu" preverimo, ali vsota na novo obiskanih vozlišč in tisti, obiskanih pred tem, ustrezata množici vseh vozlišč danega grafa.
+
+---
+
+# Aplikacija preiskovalnih algoritmov na konkretnem labirintu
+
+Morda aplikacija obravnavanih algoritmov (predstavljenih na grafih) na labirinte ni povsem intuitivna. Zato si oglejmo nekaj primerov delovanja algoritmov na konkretnih labirintih.
+
+---
+
+## Iskanje v globino
+
+### Labirint brez krožnih poti
+
+1. Dan je labirint:
+   
+   <img src="./dodatne_slike/g_0.jpg" width="300" >
+
+2. Začnemo pri vhodu v labirint. Na tem mestu s `kvadratkom` označimo potožaj v labirintu, s `pikami` ob stranicah kvadrata pa smeri, v katere lahko s trenutnega položaja potujemo. Pri tem označujemo le smeri različne od tiste, s katere smo prišli v trenutno točko:
+  
+   <img src="./dodatne_slike/g_1.jpg" width="300" >
+
+3. Označujemo celoten hodnik in ko pridemo do križišča, označimo vse možne hodnike, v katere lahko nadaljujemo preiskovanje. Torej s pikami označimo vse potencialne poti preiskovanja:
+  
+   <img src="./dodatne_slike/g_2.jpg" width="300" >
+
+4. Ker pregledujemo v globino, izberemo najbolj desno pot, torej v našem primeru nadaljujemo z gibanjem navzdol:
+  
+   <img src="./dodatne_slike/g_3.jpg" width="300" >
+
+5. Ko pridemo do križišča, ponovimo postopek iz točke `(3.)` in nadaljujemo pot navzol:
+  
+   <img src="./dodatne_slike/g_4.jpg" width="300" >
+
+6. Ponovno si izberemo najbolj desni hodnik in po njem nadaljujemo preiskovanje:
+  
+   <img src="./dodatne_slike/g_5.jpg" width="300" >
+
+7. Ko pridemo do konca hodnika, ugotovimo, da smo prišli v `slep hodnik`. Torej se moramo vrniti nazaj po preiskovani poti vse do nekega križišča, ki nam ponovno omogoča izbiro poti gibanja. Pri vračanju si beležimo pot gibanja, saj bo le to indiciralo že preiskano pot (uporabimo `rdeče pike`):
+  
+   <img src="./dodatne_slike/g_6.jpg" width="300" >
+
+8. Ko pridemo do ustreznega križišča, označimo, s katere smeri smo prišli vanj, saj bo le to indiciralo pregledanost hodnika. Ponovno izberemo najbolj desni hodnik in po njem nadaljujemo pot preiskovanja:
+  
+   <img src="./dodatne_slike/g_7.jpg" width="300" >
+
+9. Ponovno prispemo v neko križišče, si označimo potencialne smeri gibanja in izberemo najbolj desni hodnik ter po njem nadaljujemo preiskovanje:
+  
+   <img src="./dodatne_slike/g_8.jpg" width="300" >
+
+10. Ponovimo postopek iz točke `(9.)`:
+  
+    <img src="./dodatne_slike/g_9.jpg" width="300" >
+
+11. Sedaj opazimo, da smo prispeli do iskanega `izhoda`. Na tem mestu lahko preiskovanje zaključimo, saj smo našli vsaj eno pot od `vhoda` do `izhoda`. Če želimo zapisati to pot, se vračamo po poti po kateri smo prispeli do izhoda. Pri tem na vsakem koraku izberemo smer, ki ni označena s piko. Če take poti ni, izberemo tisto, po kateri smo pri prvotnem preiskovanju prišli na trenutno mesto. Na primer v labirintu spodaj na sredini - vemo, da pot naravnost ne bo ustrezna, saj smo pri predhodnjem preiskovanju ugotovili, da gre za slep hodnik. Torej bomo izbrali smer, po kateri smo prišli v to križišče, torej bomo pot nadaljevali desno. Označimo dobljeno pot:
+
+    <img src="./dodatne_slike/g_pot.jpg" width="300" >
+
+12. Če želimo preiskati celoten labirint, preskočimo točko `(11.)` in nadaljujemo s preiskovanjem. Torej se obnašamo tako, kot da bi prispeli v `slep hodnik`. Torej ponovimo postopek iz točke `(7.)`:
+  
+    <img src="./dodatne_slike/g_10.jpg" width="300" >
+
+13. Prispeli smo v situacijo, podobno tisti iz točke `(8.)`, zato ponovimo že znan postopek:
+  
+    <img src="./dodatne_slike/g_11.jpg" width="300" >
+
+14. Ponovno spoznamo, da se nahajamo v `slepem hodniku`, zato ponovimo postopek iz točke `(7.)`:
+  
+    <img src="./dodatne_slike/g_12.jpg" width="300" >
+
+15. Prispeli smo v križišče, ki ima dva možna izhoda. Vemo, da smo enega izmed hodnikov že pregledali (tj. hodnik naravnost - označen z rdečo piko), torej je naša edina možnost potovanja po hidniku na desni:
+  
+    <img src="./dodatne_slike/g_13.jpg" width="300" >
+
+16. Sprehodimo se po celotnem hodniku prispemo do križišča, iz katerega nadaljujemo potovanje po najbolj desnem še nepregledanem hodniku - torej pot nadaljujemo naravnost:
+  
+    <img src="./dodatne_slike/g_14.jpg" width="300" >
+
+17. Ponovno ugotovimo, da smo preiskovali slep hodnik, zato ponovimo postopek iz točke `(7.)`:
+  
+    <img src="./dodatne_slike/g_15.jpg" width="300" >
+
+18. Ko se vračamo po že preiskani poti, pridemo v križiče, za katerega vemo, da ima samo še en hodnik, po katerem laho nadaljujemo pot. To je edini hodnik, ki še ni označen z rdečo piko. Zato pot nadaljujemo po njem:
+  
+    <img src="./dodatne_slike/g_16.jpg" width="300" >
+
+19. Ugotovimo, da smo se znašli v situaciji analogni tisti, iz točke `(18.)`. Torej ponovno pot nadaljujemo po edinem še ne preiskanem hodniku:
+  
+    <img src="./dodatne_slike/g_17.jpg" width="300" >
+
+20. Prispeli smo do križiča, iz katerege pot nadaljujemo po najbolj desnem hodniku:
+  
+    <img src="./dodatne_slike/g_18.jpg" width="300" >
+
+21. Ponovno smo prispeli v slep hodnih, zato se vrnemo nazaj do prvega križišča:
+  
+    <img src="./dodatne_slike/g_19.jpg" width="300" >
+
+22. Znajdemo se v situaciji analogni tisti, iz točke `(18.)`:
+  
+    <img src="./dodatne_slike/g_20.jpg" width="300" >
+
+23. Ponovimo postopek iz točke `(20.)`:
+  
+    <img src="./dodatne_slike/g_21.jpg" width="300" >
+
+24. Ponovimo postopek iz točke `(21.)`:
+  
+    <img src="./dodatne_slike/g_22.jpg" width="300" >
+
+25. Ponovimo postopek iz točke `(22.)`:
+  
+    <img src="./dodatne_slike/g_23.jpg" width="300" >
+
+26. Ugotovimo, da smo se vrnili na začetek labirinta (tj. v točko, v kateri smo začeli preiskovanje) ter iz njega ne vodi noben nepregledan hodnik. Torej vemo, da smo preiskali celoten labirint.
+
+
+**Ugotovimo:** Pri preiskovanju labirinta brez krožnih poti imamo več možnih situacij:
+
+1. preiskujemo hodnik, dokler ne pridemo do nekega križišča:
+   * pot nadaljujemo po najbolj desnem še nepregledanem hodniku (tj. hodnik, ki še ni označen z rdečo piko);
+   * ugotovimo, da smo prišli na začetek preiskovanja (tj. vhod v labirint) ter smo že preiskali celoten labirint, zato zaključimo s preiskovanjem; 
+2. preiskujemo slep hodnik. Ko pridemo do konca, se po njem vrnemo do prvega križišča, v katerem ozančimo, po katerem hodniko smo prišli vanj (tj. narišemo rdečo piko v smeri trenutnega hodnika), in ponovimo postopek iz točke `(1.)`.
+
+
+
+### Labirint s krožnimi potmi
+
+Postopek preiskovanja je analogen postopku za preiskovanje labirintov brez krožnih poti. Edina razlika se pojavi pri preiskuju krožne poti. Zato si oglejmo en primer preiskovanja v globinino na labirintu s krožnimi potmi, pri čemer nas ne bo zanimala pot do izhoda, temveč zgolj celoten pregled labirinta.
+
+1. Dan je labirint:
+   
+    <img src="./dodatne_slike/g0.jpg" width="300" >
+
+2. Začnemo pri vhodu v labirint. Na tem mestu s `kvadratkom` označimo potožaj v labirintu, s `pikami` ob stranicah kvadrata pa smeri, v katere lahko s trenutnega položaja potujemo. Pri tem označujemo le smeri različne od tiste, s katere smo prišli v trenutno točko:
+  
+    <img src="./dodatne_slike/g1.jpg" width="300" >
+
+3. V križišču označimo vse možne poti preiskovanja. Preiskovanje nadaljujemo po najbolj desni poti:.
+  
+    <img src="./dodatne_slike/g2.jpg" width="300" >
+
+4. Sprehodimo se skozi celoten hodnik:
+  
+    <img src="./dodatne_slike/g3.jpg" width="300" >
+
+5. Iz slepega hodnika se vračamo nazaj do prvega križišča:
+  
+    <img src="./dodatne_slike/g4.jpg" width="300" >
+
+6. Pot nadaljujemo v skrajno desni še nepregledani hodnik:
+  
+    <img src="./dodatne_slike/g5.jpg" width="300" >
+
+7. Iz trenutnega križišča pot nadaljujemo v srajno desni nepregledani hodnik, torej se gibljemo naravnost:
+  
+    <img src="./dodatne_slike/g6.jpg" width="300" >
+
+8. Po slepem hodniku se vrnemo do prvega križišča:
+  
+    <img src="./dodatne_slike/g7.jpg" width="300" >
+
+9. Pot nadaljujemo po najbolj desnem še nepregledanem hodniku:
+  
+    <img src="./dodatne_slike/g8.jpg" width="300" >
+
+10. Iz križišča preiskovanje nadaljujemo po skrajno desnem hodniku: 
+  
+   <img src="./dodatne_slike/g9.jpg" width="300" >
+
+11. Pot nadaljujemo po desnem hodniku:
+  
+  <img src="./dodatne_slike/g10.jpg" width="300" >
+
+12. Našli smo izhod. Ker naš namen ni bil najti pot od vhoda do izhoda, temveč preiskati celoten labirint, se obnašamo, kot da smo naleteli na slep hodnik. Zato se vrnemo po hodniku vse do prvega križošča:
+  
+   <img src="./dodatne_slike/g11.jpg" width="300" >
+
+13. Pot nadaljujemo po skrajno desnem hodniku - gibljemo se naravnost:
+  
+    <img src="./dodatne_slike/g12.jpg" width="300" >
+
+14. Iz slepega hodnika se vrnemo do prvega križišča:
+  
+    <img src="./dodatne_slike/g13.jpg" width="300" >
+
+15. Pot nadaljujemo po edini možni poti in sicer desno:
+  
+    <img src="./dodatne_slike/g14.jpg" width="300" >
+
+16. Iz trenutnega križišča se gibljemo po skrajno desnem hodniku:
+  
+    <img src="./dodatne_slike/g15.jpg" width="300" >
+
+17. Prišli smo do točke, ki sicer še ni označena za pregledano (tj. nima rdeče pike, ki bi kazala v smer proti hodniku, v katerem se nahajamo), vendar ima `črno piko`, ki kaže v našo smer. To pomeni, da smo v labirintu našli krožno pot. Ker želimo pregledati preostanek labirinta, se odločimo, da `črno piko spremenimo v rdečo` ter se obnašamo enako, kot v slepem hodniku. Torej se vrnemo po trenutnem hodniku do prvega križišča:
+  
+    <img src="./dodatne_slike/g16.jpg" width="300" >
+
+18. Pot nadaljujemo po skrajno desnem hodniku:
+  
+    <img src="./dodatne_slike/g17.jpg" width="300" >
+
+19. Pot ponovno nadaljujemo po skrajno desnem hodniku:
+  
+    <img src="./dodatne_slike/g18.jpg" width="300" >
+
+20. Pot nadaljujemo po edinem še nepregledanem hodniku:
+  
+    <img src="./dodatne_slike/g19.jpg" width="300" >
+
+21. Ugotovimo, da smo se vrnili na začetek labirinta (tj. v točko, v kateri smo začeli preiskovanje) ter iz njega ne vodi noben nepregledan hodnik. Torej vemo, da smo preiskali celoten labirint.
+
+
+**Ugotovimo:** Pri preiskovanju labirinta s krožnimi potmi imamo več možnih situacij:
+
+1. preiskujemo hodnik, dokler ne pridemo do nekega križišča:
+   * pot nadaljujemo po najbolj desnem še nepregledanem hodniku (tj. hodnik, ki še ni označen z rdečo piko);
+   * ugotovimo, da smo prišli na začetek preiskovanja (tj. vhod v labirint) ter smo že preiskali celoten labirint, zato zaključimo s preiskovanjem; 
+2. preiskujemo slep hodnik. Ko pridemo do konca, se po njem vrnemo do prvega križišča, v katerem ozančimo, po katerem hodniko smo prišli vanj (tj. narišemo rdečo piko v smeri trenutnega hodnika), in ponovimo postopek iz točke `(1.)`.
+3. preiskujemo hodnik, dokler ne pridemo do točke, ki sicer še ni označena za pregledano (tj. nima rdeče pike, ki bi kazala v smer proti hodniku, v katerem se nahajamo), vendar ima `črno piko`, ki kaže v našo smer (tj. v labirintu smo našli krožno pot). Ker želimo pregledati preostanek labirinta, `črno piko spremenimo v rdečo` ter se obnašamo enako, kot v točki `(2.)`.
+
+---
+
+## Iskanje v širino
+
+Oglejmo si aplikacijo algoritma za iskanje v širino na danih labirintih.
+
+### Labirint brez krožnih poti
+
+1. Dan je labirint:
+   
+     <img src="./dodatne_slike/s_0.jpg" width="300" >
+
+2. Preiskovajne začnemo pri vhodu v labirint. Na tem mestu s `kvadratkom` označimo potožaj v labirintu, s `pikami` ob stranicah kvadrata pa smeri, v katere lahko s trenutnega položaja potujemo. Pri tem označujemo le smeri različne od tiste, s katere smo prišli v trenutno točko:
+  
+    <img src="./dodatne_slike/s_1.jpg" width="300" >
+
+3. Ko pridemo do križišča, označimo vse možne poti iz njega in si jih zapomnimo, saj se bomo kmalu vrnili v to križišče in nadaljevali preiskovanje po preostalih poteh iz njega:
+  
+    <img src="./dodatne_slike/s_2.jpg" width="300" >
+
+4. Torej na tem koraku nadaljujemo preiskovanje po skrajno desnem hodniku. Ko pridemo do križišča si zapomnimo vse poti, ki vodijo iz njega:
+  
+    <img src="./dodatne_slike/s_3.jpg" width="300" >
+
+5. Vrnemo se do križišča iz točke `(3.)` in nadaljujemo preiskovanje v najbolj desni še nepregledani hodnik:
+  
+    <img src="./dodatne_slike/s_4.jpg" width="300" >
+
+6. Ker smo po končanem postopku iz točke `(5.)` ugotovili, da je bil hodnik slep, v križišču iz točke `(3.)` pa ni bilo nobenega nepregledanega hodnika več, se premaknemo v križišče iz točke `(4.)` in v njem ponovimo postopek iz točke `(3.)`. Torej pot nadaljujemo v dnajbolj desni hodnik. Ko pridemo do križišča, si zapomnimo vse možne poti iz njega:
+  
+    <img src="./dodatne_slike/s_5.jpg" width="300" >
+
+7. Vrnemo se nazaj v križišče iz točke `(4.)` in preiščemo preostali hodnik. Ugotovimo, da je hodnik slep:
+  
+    <img src="./dodatne_slike/s_6.jpg" width="300" >
+
+8. Gremo v križišče iz točke `(6.)` in preiskujemo najbolj desni hodnik. Ugotovimo, da je slep:
+  
+    <img src="./dodatne_slike/s_7.jpg" width="300" >
+
+9. Vrnemo se nazaj v križišče iz točke `(6.)` in preiskovanje nadaljujemo v najbolj desnem še neprehledanem hodniku. Ko pridemo do križišča, si zapomnimo, do katerih hodnikov lahko iz njega dostopamo:
+  
+    <img src="./dodatne_slike/s_8.jpg" width="300" >
+
+10. Preiskovanje nadaljujemo v najbolj desni hodnik iz križišča iz točke `(9.)`. Ponovno si zapomnimo možne poti iz končnega križišča preiskovanega hodnika:
+  
+    <img src="./dodatne_slike/s_9.jpg" width="300" >
+
+11. Vrnemo se nazaj v križišče iz točke `(9.)` in preiščemo preostali hodnik. Zanj ugotovimo, da je slep:
+  
+    <img src="./dodatne_slike/s_10.jpg" width="300" >
+
+12. Vrnemo se v križišče iz točke `(10.)` in preiščemo najbolj desni hodnik. Ugotovimo, da nas ta hodnik pripelje do izhoda. Ker nas ne zanima pot od vhoda do izhoda, to dejstvo zanemarimo in se obnašamo, kot da smo naleteli na slep hodnik:
+  
+    <img src="./dodatne_slike/s_11.jpg" width="300" >
+
+13. Vrnemo se v križišče iz točke `(10.)` in preiščemo še zadnji nepregledani hodnik. Ugotovimo, da je tudi ta slep:
+  
+    <img src="./dodatne_slike/s_12.jpg" width="300" >
+
+14. Ker smo preiskali vse hodnike, ugotovimo, da smo preiskali celoten labirint.
+
+
+**Ugotovimo:** Pri preiskovanju labirinta brez krožnih poti imamo več možnih situacij:
+
+1. preiskujemo hodnik, dokler ne pridemo do nekega križišča:
+   * zapomnimo si vse hodnike, do katerih lahko iz njega dostopamo (nevključno tistega, po katerem smo vanj prišli);
+   * ugotovimo, da smo pregledali že vse hodnike, do katerih lahko dostopamo iz trenutnega križišča. Tedaj preiskovanje nadaljujemo iz naslednjega križišča, ki smo si ga predhodnje zapomnili; 
+2. preiskujemo slep hodnik. Ko pridemo do konca, vemo, da smo zaključili preiskovanje po tej "veji". Preiskovanje nadaljujemo iz naslednega križišča, ki smo si ga predhodnje zapomnili.
+
+
+### Labirint s krožnimi potmi
+
+Postopek preiskovanja je analogen postopku za preiskovanje labirintov brez krožnih poti. Edina razlika se pojavi pri preiskuju krožne poti. Zato si oglejmo en primer preiskovanja v širino na labirintu s krožnimi potmi, pri čemer nas ne bo zanimala pot do izhoda, temveč zgolj celoten pregled labirinta.
+
+1. Dan je labirint:
+   
+    <img src="./dodatne_slike/g0.jpg" width="300" >
+
+2. Začnemo pri vhodu v labirint. Na tem mestu s `kvadratkom` označimo potožaj v labirintu, s `pikami` ob stranicah kvadrata pa smeri, v katere lahko s trenutnega položaja potujemo. Pri tem označujemo le smeri različne od tiste, s katere smo prišli v trenutno točko:
+   
+    <img src="./dodatne_slike/s1.jpg" width="300" >
+
+3. Pregledamo najbolj desni hodnik in si zapomnimo možne poti iz končnega križišča preiskovanega hodnika:
+   
+    <img src="./dodatne_slike/s2.jpg" width="300" >
+
+4. Vrnemo se v križišče iz točke `(2.)` in ponovimo postopek iz točke `(3.)`:
+   
+    <img src="./dodatne_slike/s3.jpg" width="300" >
+
+5. Premaknemo se v križišče iz točke `(3.)` in pregledamo njegov najbolj desni hodnik. Ugotovimo, da je hodnik slep:
+   
+    <img src="./dodatne_slike/s4.jpg" width="300" >
+
+6. Vrnemo se v križišče iz točke `(3.)` in pregledamo najbolj desni še nepregledani hodnik ter si zapomnimo hodnike, do katerih lahko dostopamo iz končnega križišča:
+   
+    <img src="./dodatne_slike/s5.jpg" width="300" >
+
+7. Prestavimo se v križišče iz točke `(4.)` in pregledamo najbolj desni še nepregledani hodnik. Ker pregledujemo krožno pot, naletimo na mesto, ki je že bilo pregledano - črna pika kaže v smer hodnika, po katerem smo prišli do tega mesta. V tem primeru vemo, da je sedaj ta hodnik pregledan ter se obnašamo enako kot v primeru slepega hodnika:
+   
+    <img src="./dodatne_slike/s6.jpg" width="300" >
+
+8.  Vrnemo se v križišče iz točke `(4.)` in poreiskovanje nadaljujemo v zadnji še nepregledani hodnik. Ponovno si zapomnimo, do katerih hodnikov lahko dostopamo iz končnega križišča:
+    
+    <img src="./dodatne_slike/s7.jpg" width="300" >
+
+9. Prestavimo se v križišče iz točke `(6.)`. Preiščemo še zadnji nepregledani hodnik, za katerega ugotovimo, da je slep:
+    
+    <img src="./dodatne_slike/s8.jpg" width="300" >
+
+10. Prestavimo se v križišče iz točke `(8.)` in pregledamo njegov skrajno desni hodnik. Ugotovimo, da je slep:
+    
+    <img src="./dodatne_slike/s9.jpg" width="300" >
+
+11. Vrnemo se v križišče iz točke `(8.)` in pregledamo zadnji še nepregledani hodnik, ki vodi iz njega. Ugotovimo, da je tudi ta hodnik slep:
+    
+    <img src="./dodatne_slike/s10.jpg" width="300" >
+
+12. Opazimo, da smo pregledali vse hodnike, ki smo si jih tekom preiskovanja zapomnili. Torej vemo, da smo preiskali celoten labirint.
+
+**Ugotovimo:** Pri preiskovanju labirinta s krožnimi potimi imamo več možnih situacij:
+
+1. preiskujemo hodnik, dokler ne pridemo do nekega križišča:
+   * zapomnimo si vse hodnike, do katerih lahko iz njega dostopamo (nevključno tistega, po katerem smo vanj prišli);
+   * ugotovimo, da smo pregledali že vse hodnike, do katerih lahko dostopamo iz trenutnega križišča. Tedaj preiskovanje nadaljujemo iz naslednjega križišča, ki smo si ga predhodnje zapomnili; 
+2. preiskujemo slep hodnik. Ko pridemo do konca, vemo, da smo zaključili preiskovanje po tej "veji". Preiskovanje nadaljujemo iz naslednega križišča, ki smo si ga predhodnje zapomnili;
+3. tekom preiskovanja hodnika naletimo na že pregledano mesto - črna pika kaže v smer hodnika, po katerem smo prišli do tega mesta. Torej vemo, da je sedaj ta hodnik pregledan ter se obnašamo enako kot v točki `(2.)`.
+
+
+---
 ---
 
 # Iskanje najdaljše poti v grafu
@@ -248,6 +645,7 @@ Do sedaj smo si ogledali, kako naredimo pregled grafa z uporabo iskanja v globin
 
 Opazimo, da je najdaljša dobljena dolžina odvisna od smeri pregledovanja. Zato se bomo raje ostredotočili zgolj na aciklične usmerjene grafe. Tako bo smer pregledovanja z usmerjenostjo povezav enolično določena, poleg tega pa bomo z acikličnostjo onemogočili neskončne zanke, ki bi nam pokvarile rezultat - s cikli lahko dobimo poljubno veliko dolžino.
 
+---
 
 # Iskanje najdaljše poti v acikličnem usmerjenem grafu
 
