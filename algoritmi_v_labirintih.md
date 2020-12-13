@@ -43,7 +43,7 @@ S pomočjo zgornjega grafa lahko določimo eno od možnih poti od vhoda v labiri
 
 ---
 
-Zgoraj smo si ogledali preprost primer labirinta brez krožnih poti. Ker labirint ni imel krožnih poti, je bil pripadajoči graf brez ciklov (torej dervo). Zato si za boljše razumevaje predstavitve labirinta z grafom oglejmo še primer labirinta s krožnimi potmi.
+Zgoraj smo si ogledali preprost primer labirinta brez krožnih poti. Ker labirint ni imel krožnih poti, je bil pripadajoči graf brez ciklov (torej drevo). Za boljše razumevaje predstavitve labirinta z grafom si oglejmo še primer labirinta s krožnimi potmi.
 
 
 ## Labirint s krožnimi potmi
@@ -56,7 +56,7 @@ Ponovimo že znani postopek številčenja hodnikov.
 
 <img src="./dodatne_slike/lab_2_ostevilcen.jpg" width="300" >
 
-Ugotovimo, da je en hodnik lahko označen z več številkami. To se zgodi samo pri nekaterih hodnikih, ki so del krožnih poti labirinta, kar pa na samo predstavitev labirinta z grafom ne vpliva. Če bi želeli poiskti najdaljšo oz. najkrajšo pot v labirintu s pomočjo grafa, bi preprosto upoštevali dolžine "hodnikov". Opazimo, da skupna vsota dolžin "hodnikov" znotraj enega hodnika v labirintu še vedno ustreza dejanski dolžini tega hodnika. Na primer hodnik označen s `6` in `15` je dolg `5` enot, pri čemer opazimo, da "hodnik" označen s `6` ustreza `1` enoti, "hodnik" označen s `15` pa `4` enotam. Torej je skupna vsota še res enaka: `1 + 4 = 5`. Seveda se lahko deljenemu številčenju hodnikov izognemo z uporabo drugačnega algoritma za številčenje, vendar prepustimo ta razmislek `bralcu za vajo`.
+Ugotovimo, da je en hodnik lahko označen z več številkami. To se zgodi samo pri nekaterih hodnikih, ki so del krožnih poti labirinta, kar pa na samo predstavitev labirinta z grafom ne vpliva bistveno. Če bi želeli poiskti najdaljšo oz. najkrajšo pot v labirintu s pomočjo grafa, bi preprosto upoštevali dolžine "hodnikov". Opazimo, da skupna vsota dolžin "hodnikov" znotraj enega hodnika v labirintu še vedno ustreza dejanski dolžini tega hodnika. Na primer hodnik označen s `6` in `15` je dolg `5` enot, pri čemer opazimo, da je "hodnik" označen s `6` dolg `1` enoti, "hodnik" označen s `15` pa `4` enote. Torej je skupna vsota res enaka: `1 + 4 = 5`. Seveda se lahko deljenem številčenju hodnikov izognemo z uporabo drugačnega algoritma za številčenje, vendar ta razmislek prepustimo `bralcu za vajo`.
 
 Dan labirint predstavimo z grafom:
 
@@ -73,7 +73,7 @@ Opazimo, da so nekatere izmed možnih poti:
 * `1 -> 3 -> 6 -> 15 -> 13 -> 16 -> 5 -> 3 -> 4 -> 8 -> 17 -> 12 -> 10 -> 7 -> 9`
 * `1 -> 3 -> 6 -> 15 -> 13 -> 16 -> 5 -> 3 -> 6 -> 15 -> 13 -> 16 -> 5 -> 3 -> 4 -> 7 -> 9`
 
-Spomnimo se, da v cikličnih grafih obstaja možnost, da se nekaj časa sprehajamo po nekem ciklu, kar v našem primeru labirinta občutno podaljša pot med vhodom in izhodom.
+Spomnimo se, da v cikličnih grafih obstaja možnost, da se nekaj časa sprehajamo po nekem ciklu, kar v našem primeru labirinta (same pozitivne uteži) občutno podaljša pot med vhodom in izhodom.
 
 
 Preden se lotimo preiskovalnih algoritmov, si poglejmo, kako lahko graf predstavimo.
@@ -303,7 +303,7 @@ Morda aplikacija obravnavanih algoritmov (predstavljenih na grafih) na labirinte
   
    <img src="./dodatne_slike/g_1.jpg" width="300" >
 
-3. Označujemo celoten hodnik in ko pridemo do križišča, označimo vse možne hodnike, v katere lahko nadaljujemo preiskovanje. Torej s pikami označimo vse potencialne poti preiskovanja:
+3. Označimo celoten hodnik. Ko pridemo do križišča, označimo vse možne hodnike, v katere lahko nadaljujemo preiskovanje. Torej s pikami označimo vse potencialne poti preiskovanja:
   
    <img src="./dodatne_slike/g_2.jpg" width="300" >
 
@@ -449,15 +449,15 @@ Postopek preiskovanja je analogen postopku za preiskovanje labirintov brez krož
 
 10. Iz križišča preiskovanje nadaljujemo po skrajno desnem hodniku: 
   
-   <img src="./dodatne_slike/g9.jpg" width="300" >
+     <img src="./dodatne_slike/g9.jpg" width="300" >
 
 11. Pot nadaljujemo po desnem hodniku:
   
-  <img src="./dodatne_slike/g10.jpg" width="300" >
+    <img src="./dodatne_slike/g10.jpg" width="300" >
 
 12. Našli smo izhod. Ker naš namen ni bil najti pot od vhoda do izhoda, temveč preiskati celoten labirint, se obnašamo, kot da smo naleteli na slep hodnik. Zato se vrnemo po hodniku vse do prvega križošča:
   
-   <img src="./dodatne_slike/g11.jpg" width="300" >
+     <img src="./dodatne_slike/g11.jpg" width="300" >
 
 13. Pot nadaljujemo po skrajno desnem hodniku - gibljemo se naravnost:
   
@@ -633,209 +633,245 @@ Postopek preiskovanja je analogen postopku za preiskovanje labirintov brez krož
 
 
 ---
+
+# Iskanje najkrajše poti v grafu
+
+Do sedaj smo si ogledali, kako naredimo pregled labirinta z uporabo iskanja v globino in širino. Pri tem je bil naš namen preiskovanja preiskati celoten labirint (in najti pot preiskovanja). Kaj pa, če bi želeli o labirintu izvedeti kaj drugega - na primer katera je najkrajša pot v njem? Najprej premislimo, katerega izmed algoritmov bomo izbrali. Pri preiskovanju v širino preiskujemo po globinah. Torej je intuitivno ta algoritem primernejši za iskanje najkrajše poti. Spomnimom se, kako pregledamo nek labirint v globino. Pri tem nas bo zanimala zgolj najkrajša pot. Pri pregledovanju si bomo križišča na enaki globini označili z isto barvo. Barvanje križišč na samo rešitev sicer ne vpliva, vendar pripomore k boljši preglednosti same rešitve.
+
+1. Dan je labirint:
+   
+    <img src="./dodatne_slike/lab_2.jpg" width="300" >
+
+2. Pregledamo prvi hodnik:
+   
+    <img src="./dodatne_slike/n1.jpg" width="300" >
+
+3. Predgledano desni hodnik in ugotovino, da je slep:
+   
+    <img src="./dodatne_slike/n2.jpg" width="300" >
+4. Pregledamo levi hodnik in oznčimo končno križišče ter smeri, v katere lahko nadaljujemo preiskovanje:
+   
+    <img src="./dodatne_slike/n3.jpg" width="300" >
+5. Prestavimo se v križišče iz točke `(4.)` in pregledamo desni hodnik. Ponovno označimo končno križišče ter do katerih hodnikov lahko iz njega dostopamo:
+   
+   <img src="./dodatne_slike/n4.jpg" width="300" >
+6. Preiščemo naslednji najbolj desni nepregledani hodnik križišča iz točke `(4.)` ter ponovimo že znani postopek označevanja končnega križišča:
+   
+    <img src="./dodatne_slike/n5.jpg" width="300" >
+7. Predledamo še zadnji hodnik križišča it točke `(4.)` ter ugotovimo, da smo imeli krožno pot, torej se obnašamo tako, kot b+v primeru slepega hodnika:
+   
+    <img src="./dodatne_slike/n6.jpg" width="300" >
+8.  Preiskovanje nadaljujemo iz križišča iz točke `(5.)`. Ponovno označimo končno križišče in hodnike, do katerih imamo iz njega dostop:
+   
+    <img src="./dodatne_slike/n7.jpg" width="300" >
+9.  Preiščemo še zadnji nepregledani hotnik križišča iz ročke `(6.)` in po znanem postopku označimo končno križišče:
+    
+    <img src="./dodatne_slike/n8.jpg" width="300" >
+10. Prestavimo se v križišče iz točke `(6.)` in ugotovimo, da je samo še en hodnik nepregledan. Pregledamo ga po že znanem postopku:
+    
+    <img src="./dodatne_slike/n9.jpg" width="300" >
+11. Vrnemo se v križišče iz točke `(8.)` in preiščemo najbolj desni hodnik. Ugotovimo, da nas vodi do `izhoda`:
+    
+    <img src="./dodatne_slike/n10.jpg" width="300" >
+12. Prispeli smo do izhoda. Sedaj nas zanima, po kateri poti smo se morali sprehoditi, da smo prišli vanj. Torej se vračamo po preiskani poti. To naredimo tako, da na vsakem koraku pogledamo `kvadratek` in `pike` okoli njega. Ugotovimo, da je vsak `kvadratek` označen z vsaj eno piko, poleg tega pa ima vsaj eno stranico neoznačeno. Opazimo, da je vedno samo ena neoznačena stranica, ki nam označuje potencialno smer gibanja - tj. kvadratek sredi hodnika ima eno strenico označeno s piko in tri neoznačene. Od neoznačenih je zgolj ena taka, ki omogoča nadaljevanje gibanja v njeni smeri. Torej bomo vselej izbrali tisto smer gibanja, ki ni označena s piko. Podobna situacija je tudi v križiščih:
+    
+    <img src="./dodatne_slike/n11.jpg" width="300" >
+13. Označimo celotno pot `od izhoda do vhoda`:
+    
+    <img src="./dodatne_slike/n12.jpg" width="300" >
+14. Našli smo najkrajšo pot v labirintu:
+    
+    <img src="./dodatne_slike/n13.jpg" width="300" >
+
+
+
+## Smo res dobili najkrajšo pot med vhodom in izhodom?
+
+Ne. Dobili smo najmanjše število hodnikov, skozi katere se moramo na tej poti (od vhoda do izhoda) sprehoditi. Seveda to ni nujno edina rešitev, a je zagotovo ustrezna. Lahko se zgodi, da je dobljena pot tudi najkrajša, vendar je to zgolj slučaj.
+
+### Kaj je šlo narobe?
+
+Ugotovimo, da bi bila ta rešitev ustrezna, če bi bili vsi hodniki enakih dolžin. Žal to v našem primeru ne drži. Zato si oglejmo, kako bi pri iskanju najkrajše poti upoštevali dolžine hodnikov.
+
+
+1. Dan je labirint:
+   
+   <img src="./dodatne_slike/p1.jpg" width="300" >
+2. Označimo prvi hodnik in končnemu križišču dodelimo neko `število`. To število ustreza minimalni prepotovani dolžini do tega križišča. Torej predstavlja najmanjše število prehojenih enot do vključno trenutnega križišča:
+    
+   <img src="./dodatne_slike/p2.jpg" width="300" >
+3. Preiščemo desni hodnik in ugotovimo, da je slep. Vemo, da najkrajša pot ne bo vsebovala slepih hodnikov:
+   
+   <img src="./dodatne_slike/p3.jpg" width="300" >
+4. Preiščemo levi hodnik iz trenutnega križišča in končnemu križoišču dodelimo število, ki bo vsota števila predhodnjega križišča in dolžine trenutnega hodnika - `2 + 1 = 3`:
+
+   <img src="./dodatne_slike/p4.jpg" width="300" >
+5. Peiščemo desni hodnik iz trenutnega križišča in mu dodelimo `pripradajočo oddajlenost od vhoda` - `3 + 1 = 4`
+   
+   <img src="./dodatne_slike/p5.jpg" width="300" >
+6. Peiščemo najbolj desni še nepreiskani hodnik iz trenutnega križišča in mu dodelimo `pripradajočo oddajlenost od vhoda` - `3 + 4 = 7`
+   
+   <img src="./dodatne_slike/p6.jpg" width="300" >
+7. Peiščemo najbolj desni še nepreiskani hodnik iz trenutnega križišča in ugotovimo, da nas pripelje do že preiskanjega križišča. Na tem mestu nas zanima, katera od preiskanih poti do trenutnega križišča je krajša - prejšnja (`7`) ali trenutna (`3 + 6 = 9`). Ugotovimo, da je bila prejšnja krajša, torej se obnašamo tako, kot v primeru slepega hodnika:
+   
+   <img src="./dodatne_slike/p7.jpg" width="300" >
+8. Preiskovanje nadaljujemo iz križišča iz točke `(6.)`. Preiščemo skrajno desni hodnik in končnemu križišču dodelimo število `4 + 7 = 11`:
+   
+   <img src="./dodatne_slike/p8.jpg" width="300" >
+9. Preiščemo najbolj desni še nepreiskani hodnik križišča iz točke `(6.)` ter končnemu križišču dodelimo število `4 + 1 = 5`:
+    
+     <img src="./dodatne_slike/p9.jpg" width="300" >
+10. Preiskovanje nadaljujemo iz križišča iz točke `(7.)`. Preiščemo najbolj desni še nepreiskani hodnik ter končnemu križišču dodelimo število `7 + 5 = 12`:
+    
+    <img src="./dodatne_slike/p10.jpg" width="300" >
+11. Preiskovanje nadaljujemo iz križišča iz točke `(8.)`. Preiščemo najbolj desni še nepreiskani hodnik ter ugotovimo, da nas pripelje do izhoda. Na tem mestu zadnji točki v hodniku dodelimo število, saj nas zanima, kolikšna bo najkrajša pot od vhoda do izhoda. Torej ji pripišemo število `11 + 2 = 13`:
+    
+    <img src="./dodatne_slike/p11.jpg" width="300" >
+12. Ker ne vemo, ali je bila to res najkrajša pot, nadaljujemo s preiskovanjem, dokler ne preiščemo celotnega labirinta. Torej nadaljujemo s preiskovanjem najbolj desnega še nepreiskanega hodnika križišča iz točke `(8.)`. Končnemu križišču pripišemo število `11 + 2 = 13`:
+    
+    <img src="./dodatne_slike/p12.jpg" width="300" >
+13. Preiskovanje nadaljujemo iz križišča iz točke `(9.)`. Preiščemo najbolj desni še nepreiskani hodnik ter ugotovimo, da je slep:
+    
+    <img src="./dodatne_slike/p13.jpg" width="300" >
+14. Preiščemo najbolj desni še nepreiskani hodnik križišča iz točke `(9.)` ter končnemu križišču dodelimo število `5 + 1 = 6`:
+    
+    <img src="./dodatne_slike/p14.jpg" width="300" >
+15. Preiskovanje nadaljujemo iz križišča iz točke `(10.)`. Preiščemo najbolj desni še nepreiskani hodnik ter ugotovimo, da nas pripelje do že preiskanjega križišča. Na tem mestu nas zanima, katera od preiskanih poti do trenutnega križišča je krajša - prejšnja (`13`) ali trenutna (`12 + 1 = 13`). Ugotovimo, da sta enaki, torej opazimo, da sta poti enakih dolžin. Ker za sam rezultat ni relevantno po kateri poti pripotujemo do trenutnga križišča, se odločimo, da se obnašano tako, kot v primeru slepega hodnika:
+    
+    <img src="./dodatne_slike/p14.jpg" width="300" >
+16. Preiščemo najbolj desni še nepreiskani hodnik križišča iz točke `(10.)` ter ugotovimo, da je hodnik slep:
+    
+    <img src="./dodatne_slike/p16.jpg" width="300" >
+17. Preiskovanje nadaljujemo iz križišča iz točke `(14.)`. Preiščemo najbolj desni še nepreiskani hodnik ter ugotovimo, da nas pripelje do že preiskanjega križišča. Na tem mestu nas zanima, katera od preiskanih poti do trenutnega križišča je krajša - prejšnja (`13`) ali trenutna (`6 + 1 = 7`). Ugotovimo, da je trenutna pot krajša. Torej popravimo število, ki pripada trenutnemu križišču. Novo število ternutnega križišča je torej `7`:
+    
+    <img src="./dodatne_slike/p17.jpg" width="300" >
+18. Ker vemo, da obstaja krajša pot do križišča iz točke `(17.)`, obstaja možnost, da obstaja krajša pot do križišča pred njim - tj. križišče, ki je bil po prejšnji preiskovalni poti predhodnik trenutnega. Zato nadaljujemo preiskovanje po poti, po kateri smo pred tem prišli do trenutnega križišča. Ugotovimo, da  predhodnjemu križišču (tj. križišču iz točke `(8.)`) pripada število `11`. Vemo pa, da bi mu po trenutni poti pripadalo število `7 + 2 = 9`. Ker opazimo, da je dolžina poti po trenutni poti preiskovanja krajša, križišču popravimo pripadan+joče število:
+    
+    <img src="./dodatne_slike/p18.jpg" width="300" >
+19. Ponovimo postopek iz točke `(18.)` in ugotovimo, da je tenutna pot do izhoda krajša od prejšnje, torej tudi pri izhodu popravimo število iz `13` na `9 + 2 = 11`:
+    
+    <img src="./dodatne_slike/p19.jpg" width="300" >
+20. Vrnemo se v križišče iz točke `(10.)` in preiščemo zadnji še nepreiskan hodnik. Ugotovimo, da je slep:
+    
+    <img src="./dodatne_slike/p20.jpg" width="300" >
+21. Ugotovimo, da smo preiskali celoten labirint. Po že znanem postopku se vrnemo po najkrajši poti do vhoda. Izbiro smeri potovanja iz posamezne točke za boljšo predstavi označimo z `rdečimo pikami`:
+    
+    <img src="./dodatne_slike/p21.jpg" width="300" >
+22. Dobili smo najkrajšo pot od vhoda do izhoda ter pripadajočo dolžino:
+    
+    <img src="./dodatne_slike/p22.jpg" width="300" >
+
+
+
+## Iskanje najkrajše poti v labirintu s pomočjo pripadajočega grafa
+
+Ugotovimo, da bi bilo za iskanje najkrajše poti ustrezneje labirint predstaviti z oteženim grafom. Le tako bi bila rešitev očitnejša ter lažje predstavljiva.
+
+
+### Zapis labirinta z grafom
+
+Ker bomo imeli opravka z labirintom s križnimi obhodi, vemo, da bomo do vsaj enega križišča lahko dostopali po več kot eni poti. Zato bomo vsa križišča označevali z zaporednimi številkami (vemo, da sama oznaka križišča ne vpliva na sam rezultat). Povezave med njimi bodo predstavljale hodnike. Ker so hodniki različnih dolžin, bomo vsako povezavo otežili s številko, ki bo predstavljala število dolžinskih enot hotnika.
+
+Oglejmo si, kako to storimo za zgornji primer.
+
+1. Dan je labirint:
+   
+   <img src="./dodatne_slike/a1.jpg" width="300" >
+2. S številom `1` označimom `vhod`. To vozlišče tudi zapišemo:
+   
+   <img src="./dodatne_slike/a2.jpg" width="300" >
+3. Preiščemo hodnik ter končno križišče označimo z `2`. Zapišemo vozlišče `2` in povezavo med `1` in `2` otežimo z `2`, saj je dolžina hodnika, vključno s trenutnim križiščem enaka `2`:
+   
+   <img src="./dodatne_slike/a3.jpg" width="300" >
+4. Preiščemo desni hodnik iz vozlišča `2` in ugotovimo, da je slep. Končno točko križišča označimo s `3`, povezavo med vozliščema `2` in `3` pa otežimo z `2`:
+   
+   <img src="./dodatne_slike/a4.jpg" width="300" >
+5. Preiščemo levi hodnik iz vozlišča `2` in končno križišče označimo s `4`. Povezavo med vozliščema `2` in `4` otežimo z `1`:
+   
+   <img src="./dodatne_slike/a5.jpg" width="300" >
+6. Preiščemo desni hodnik iz vozlišča `4`in končno križišče označimo s `5`. Povezavo med vozliščema `4` in `5` otežimo z `1`:
+   
+   <img src="./dodatne_slike/a6.jpg" width="300" >
+7. Preiščemo najbolj desni nepregledani hodnik iz vozlišča `4`in končno križišče označimo s `6`. Povezavo med vozliščema `4` in `6` otežimo s `4`:
+   
+   <img src="./dodatne_slike/a7.jpg" width="300" >
+8. Preiščemo levi hodnik iz vozlišča `4`in opazimo, da je končno križišče že označeno s `6`. Torej do križišča `6` vodita vsaj dva hodnika. Torej v grafu želimo dodati povezavo do vozlišča `6`. Novo povezavo med vozliščema `4` in `6` otežimo s `6`:
+   
+    <img src="./dodatne_slike/a8.jpg" width="300" >
+9. Preiskovanje nadaljujemo iz križišča `5`. Preiščemo desni hodnik in končno križišče označimo s `7`, povezavo med njima pa otežimo s `7`:
+    
+     <img src="./dodatne_slike/a9.jpg" width="300" >
+10. Preiskovajne nadaljujemo v najbolj desnem nepregledanem hodniku iz križišča `5`. Končno križišče označimo z `8`, povezavo med vozliščema `5` in `8` pa otežimo z `1`:
+    
+    <img src="./dodatne_slike/a10.jpg" width="300" >
+11. Premaknemo se v križišče `6` in pregledamo edini še nepregledani hodnik. Končno križišče označimo z `9`, povezavo med `6` in `9` pa otežimo s `5`:
+    
+    <img src="./dodatne_slike/a11.jpg" width="300" >
+12. Preiskovanje nadaljujemo iz križišča `7`. Preiščemo njegov desni hodnik in ugotovimo, da nes pripelje do izhoda. `Izhod` označimo z vozliščem `10`, povezavo med `7` in `10` pa otežimo z `2`:
+    
+    <img src="./dodatne_slike/a12.jpg" width="300" >
+13. Preiščemo še levi hodnik iz križišča `7`. Končno križišče označimo z `11`, opvezavo med njima pa otežimo z `2`:
+    
+    <img src="./dodatne_slike/a13.jpg" width="300" >
+14. Preiskovanje nadaljujemo iz križišča `8`. Desni hodnik je slep, zato končno točko označimo z `12`, povezavo med `8` in `12` pa otežimo z `1`:
+    
+    <img src="./dodatne_slike/a14.jpg" width="300" >
+15. Levi hodnik iz križišča `8` vodi do novega križišča, ki ga označimo s `13`. Povezavo med križiščema v grafu otežimo z `1`:
+    
+    <img src="./dodatne_slike/a15.jpg" width="300" >
+
+16. Preiščemo še hodnike iz križišča `9`. Ugotovimo, da je desni hodnik slep. Označimo ga s `14`, povezavo pa otežimo z `1`. Opazimo, da preostali hodnik vodi do že pregledanega križišča. Torej v grafu zgolj dodamo povezavo med vozliščema `9` in `11` ter jo otežimo z `1`:
+    
+    <img src="./dodatne_slike/a17.jpg" width="300" >
+
+17. Pregledamo še hodnike iz vozlišča `13`. Ugotovimo, da nas desni pripelje do že pregledanega križišča. Torej samo dodamo povezavo med vozliščema `13` in `11` ter jo otežimo z `1`. Zadnji nepregledani hodnik iz križišča `13` je slep. Torej ga označimo s `15` ter povezavo otežimo z `1`:
+
+    <img src="./dodatne_slike/a19.jpg" width="300" >
+
+18. Dobili smo otežen graf, ki predstavlja dani labirint.
+
+
+### Iskanje najkrajše poti v grafu
+
+Dobili smo ustezno predstavitev labirinta z grafom. Sedaj se lahko lotimo iskanja najkrajše poti v njem.
+
+1. Dan je graf z oteženimi povezavami. Iščemo najkrajšo pot med vozliščema `1` in `10`:
+   
+   <img src="./dodatne_slike/d1.jpg" width="300" >
+2. Preblema se lotimo od zadaj. Vemo namreč, da moramo priti do vozlišča `10`. Da pridemo v željeno vozlišče, vemo, da bomo morali iti skozi njegovega predhodnika, torej skozi vozlišče `7`. Ker iščemo najkrajšo pot med dvema vozliščema, moramo od vozlišča `1` do vozlišča `7` priti po najkrajši možni poti. Najkrajšo možno pot do nekega vozlišča `x` označimo z `d(x)`. Torej bo najkrajša pot med vozliščema `1` in `10` enaka najkrajši poti od vozlišča `1` do `7`, keteri prištejemo utež povezave med vozliščema `7` in `10`. Torej mora veljati `d(10) = 2 + d(7)`:
+   
+   <img src="./dodatne_slike/d2.jpg" width="300" >
+3. Opazimo, da se je naš problem zmanjšal. Namesto, da iščemo `d(10)`, sedaj iščemo `d(7)`. Opazimo, da v vozlišče `7` vodita dve poti. Ena preko vozlišča `5`, druga preko vozlišča `11`. KEr nas zanima najkrajša mošžna pot, mora veljati `d(7) = min{7 + d(5), 2 + d(11)}`:
+   
+   <img src="./dodatne_slike/d3.jpg" width="300" >
+4. Torej nas sedaj zanimata vrednosti `d(5)` in `d(11)`. Torej za vsako od vozlišč `5` in `11` ponovimo že znani postopek. Ko prispemo do vozlišča `6` opazimo, da vanj vodita dve povezavi z različnima obtežitvama. Ker nas zanima najkrajša pot, bomo izbrali manjšo - `d(6) = d(4) + min{4, 6}`:
+      
+   <img src="./dodatne_slike/d6.jpg" width="300" >
+5. Nadaljujemo z določanjem `oddaljenosti oz začetnega vozlišča` vse dokler ne pridemo do njega. Tedaj se zavedamo, da je oddaljenost začetnega vozlišča od njega samega `ničelna`:
+   
+    <img src="./dodatne_slike/d8.jpg" width="300" >
+
+6.  Označimo še preostali del grafa:
+    
+    <img src="./dodatne_slike/d10.jpg" width="300" >
+7.  Sedaj pričnemo z računanje dejanskih oddaljenosti posameznih vozlišč. Ko pridemo v vozlišče `5` opazimo, da še ne moremo nadaljevati poti v vozlišče `7`, saj za določitev oddaljenosti vozlišča `7` potrebujemo tako `d(5)` kot tudi `d(11)`. Prav tako poramo za izračun oddaljenosti vozlišča `11` poznati tako `d(13)` kot tudi `d(9)`. Ugotovimo, da je `d(11)` najmanjša takrat, kadar v vozlišče `11` prispemo preko vozlišča `13`. To si na grafu tudi označimo:
+    
+    <img src="./dodatne_slike/d11.jpg" width="300" >
+8.  Ugotovili smo, da velja `d(10) = 11`. Torej sedaj vemo, da je najkrajša pot med vozliščema `1` in `10` dolga `11` enot:
+    
+    <img src="./dodatne_slike/d13.jpg" width="300" >
+9.  Zanima nas tudi katera pot je najkrajša. Torej označimo, po kateri poti smo se sprehodili od vozlišča `1` do vozlišča `10`:
+    
+    <img src="./dodatne_slike/d14.jpg" width="300" >
+
+
+Kot je bilo očitno, smo si pri iskanju najkrajše poti med dvema vozliščema v grafu pomagali z dimaničnim programiranjem. Opazimo, da je pričakovana časovna zahtevnost tega algoritma `O(V + P)`, kjer je `V` število vozlišč v grafu in `P` število povezav v njem.
+
 ---
 
 # Iskanje najdaljše poti v grafu
 
-
-Do sedaj smo si ogledali, kako naredimo pregled grafa z uporabo iskanja v globino in širino. Pri tem je bil naš namen preiskovanja najti pot preiskovanja. Kaj pa, če bi želeli iz grafa izvedeti kaj drugega - na primer najdaljšo pot v grafu? Najprej premislimo, katerega izmed algoritmov bomo izbrali. Pri preiskovanju v širino preiskujemo po nivolih. Torej je ta algoritem primernejši za iskanje najkrajše poti. Pri preiskovanju v globino pa na vsakem koraku preiskujemo maksimalno globoko. Torej lahko dobimo dolžine posameznih podgrafov. Poglejmo si na primeru cikličnega grafa. Pri tem se lotimo preiskoovanja najprej z leve, nato pa še z desne.
-
-<img src="./slike/cikel_dol_1.png" width="200" >
-<img src="./slike/cikel_dol_2.png" width="200" >
-
-Opazimo, da je najdaljša dobljena dolžina odvisna od smeri pregledovanja. Zato se bomo raje ostredotočili zgolj na aciklične usmerjene grafe. Tako bo smer pregledovanja z usmerjenostjo povezav enolično določena, poleg tega pa bomo z acikličnostjo onemogočili neskončne zanke, ki bi nam pokvarile rezultat - s cikli lahko dobimo poljubno veliko dolžino.
-
----
-
-# Iskanje najdaljše poti v acikličnem usmerjenem grafu
-
-V acikličnem usmerjenem grafu želimo poiskati najdaljšo pot. Najdaljša pot v neoteženem grafu je pot z največ vozlišči. Pot je dolga toliko, kolikor povezav vsebuje.
-
-Oglejmo si primer takega grafa:
-
-<img src="./slike/dag.png" width="300" >
-
-Ta graf ima 6 vozlišč in 9 usmerjenih povezav ter je brez ciklov. Ena izmed najdaljših poti za ta graf je `54 -> 4 -> 37 -> 11 -> 1`:
-
-<img src="./slike/dag_najdaljsa.png" width="300" >
-
-Očitno je najdaljša pot res dolga 4.
-
-
-## Naivni pristop
-Spomnimo se algoritmov za iskanje v globino in širino. Ker nas zanima kako `globoko` lahko pridemo iz nekega vozlišča, bomo uporabili algoritem za iskanje v globino.
-
-
-### Algoritem:
-1. Najprej graf razbijemo na podgrafe. To naredimo za vsako vozlišče posebej.
-   
-   <img src="./slike/pod1.png" width="100" >
-   <img src="./slike/pod4.png" width="200" >
-   <img src="./slike/pod11.png" width="100" >
-   <img src="./slike/pod37.png" width="100" >
-   <img src="./slike/pod54.png" width="200" >
-   <img src="./slike/pod71.png" width="200" >
-
-2. V vsakem grafu poiščemo vse možne poti in določimo njihove dolžine. To naredimo z iskanjem v globino (V tem primeru nas zanimajo dolžine poti v podgrafih, ne pa pot preiskovanja grafa. Torej se bo dolžina poti shranila vsakič, ko se bo algoritem moral vračati. Ob vračanju moramo pozabiti na vsa vozlišča, preko katerih se vračamo.) V našem primeru dobimo poti z dolžinami:
-
-   <img src="./slike/1.png" width="100" >
-   <img src="./slike/4.png" width="200" >
-   <img src="./slike/11.png" width="100" >
-   <img src="./slike/37.png" width="100" >
-   <img src="./slike/54.png" width="300" >
-   <img src="./slike/71.png" width="300" >
-
-3. Za vsak podgraf si zapomnimo dolžino najdaljše poti.
-   ```
-    vozlišče  1: 0
-    vozlišče  4: 3
-    vozlišče 11: 1
-    vozlišče 37: 2
-    vozlišče 54: 4
-    vozlišče 71: 4
-   ```
-4. Iskana najdaljša pot danega grafa je enaka najdaljši poti podgrafov.
-   ```
-    najdaljša pot = 4
-   ```
-
-### Časovna zahtevnost
-Časovna zahtevnost tega postopka je `O(V^2)`, kjer je `V = število vozlišč`.
-
-
-## Boljši pristop
-
-*Topološko urejanje*
-
-<img src="./slike/top_prazen.png" width="500" >
-
-Topološko razvrščanje tega grafa je: `1 2 3 4 5`. <br>
-Za graf je možno več različnih topoloških urejenosti. Za graf, ki je naveden zgoraj, je topološko razvrščanje: `1 2 3 5 4`<br>
-Pri topološkem razvrščanju graf ne sme vsebovati ciklov. Da bi to dokazali, predpostavimo, da obstaja krog iz vozlišč `v_1`, `v_2` ... `v_n`. To pomeni, da obstaja usmerjena pot med `v_i` in `v_i+1` `(1 <= i > n)` in med `v_n` in `v_1`. S topološkim razvrščanjem, moramo priti prej do `v_n` kot do `v_1`. Jasno je, da bo prišel `v_i+1` po `v_i`, ker mora biti zaradi napotkov od `v_i`  do `v_i+1` povezava, to pomeni, da je `v_1` pred `v_n`. No, očitno smo prišli do protislovja. Topološko razvrščanje je torej mogoče doseči samo za usmerjene in aciklične grafe.
-
-Poglejmo, kako lahko v grafu najdemo topološko razvrščanje. Torej v bistvu želimo najti permutacijo oglišč, v kateri velja za vsako oglišče `v_i`  in za vsa vozlišča `v_j`, ki imajo povezavo na `v_i`, da pridejo pred `v_i`. Uporabili bomo tabelo `T`, ki bo označevala naše topološko razvrščanje. Recimo, da imamo za graf z `N` vozlišči seznam `sez` velikosti `N`, katerega *i-ti* element pove število vozlišč, ki še niso vstavljena v `T` in imajo povezavo do `v_i`. Ko bomo `v_i` dodali v `T`, bomo zmanšali vrednost `sez[v_j]` za ena, za vsa vozlišča od `v_i` do `v_j`. Ko smo to naredili, smo dodali povezavo do `v_j`. Tako lahko kadar koli vstavimo samo tista vozlišča, za katera je vrednost `sez[vozlišče] = 0`.
-Psevdo koda algoritma:
-```python
-def topolosko_urejanje(N, matrika_sosednosti):
-   '''
-      topološko uredi vozlišča, kar za nas pomeni vozlišča od "najbolj osnovnega" lista do tistega, 
-      ki je "najvišje v grafu"
-      ker pa želimo dobiti najdaljšo pot, je to ravno tisto, kar želimo
-   '''
-   ustvarimo prazen T
-   ustvarimo tabelo sez samih ničel, prav tako tudi tabelo obiskani samih ničel
-   potem gremo z zankama preko matrike sosednosti:
-      če je v matriki_sosednosti True na tem mestu,
-         sez povečamo za ena na tem mestu
-   Potem na indexih z vrednostjo 0 v sez
-      element postavimo v vrsto in tudi obiskani[element] nastavimo na True
-   Sedaj pa delamo, dokler se nam vrsta ne izprazni:
-      prvi element vstavimo v T in ga odstranimo,
-      spet gremo po zanki vozlišč.
-         Vse elemente v matriki_sosednosti[element iz vrha vrste][index] in obiskani[index] ni True
-            sez[index] -= 1
-            Če je sedaj sez[index] 0,
-               to vozlišče vstavimo v vrsto in v tabeli obiskani postane True 
-   Vrnemo T
-```
-
-Vzemimo si labirint na vrhu tega razdelka. Njegov graf zgleda tako:<br>
-<img src="./slike/top1.png" width="500" >
-
-```
-Vrsta = 0
-sez = 0 1 1 3 2 3
-      0 1 2 3 4 5
-T = {}
-```
-
-
-```
-Vrsta = 1
-sez = 0 0 1 2 2 3
-      0 1 2 3 4 5
-T = 0
-```
-
-Torej izbrišemo 0 iz vrste in dodamo v `T`. Vozlišča, ki so neposredno povezana z 0, so 1 in 3, zato jim zmanjšamo vrednost v `sez[i]` za ena. V vrsto pa porinemo 1.
-
-```
-Vrsta = 2
-sez = 0 0 0 1 2 3
-      0 1 2 3 4 5
-T = 0 1
-```
-
-Nato izbrišemo 2 iz vrste in jo dodamo v `T`. S tem se zmanjša vrednost `sez[i]` pri 4, 5.
-```
-Vrsta = 3
-sez = 0 0 0 0 1 2
-      0 1 2 3 4 5
-T = 0 1 2
-```
-
-Nato izbrišemo 3 iz vrste in jo dodamo v `T`. S tem se zmanjša vrednost `sez[i]` pri 4, 5. sez[4] postane 0, zato 4 vstavimo v vrsto.
-```
-Vrsta = 4
-sez = 0 0 0 0 0 1
-      0 1 2 3 4 5
-T = 0 1 2 3
-```
-
-Nato izbrišemo 4 iz vrste in jo dodamo v `T`. S tem se zmanjša vrednost `sez[i]` pri  5. sez[5] postane 0, zato 5 vstavimo v vrsto.
-```
-Vrsta = 5
-sez = 0 0 0 0 0 0
-      0 1 2 3 4 5
-T = 0 1 2 3 4
-```
-Nato izbrišemo 5 iz vrste in dodamo v `T`. S tem je algoritem zaključil - vrne `T`.
-```
-Vrsta = {}
-sez = 0 0 0 0 0 0
-      0 1 2 3 4 5
-T = 0 1 3 2 4 5
-```
-*Najdaljša pot v tem labirintu zgleda:*
-
-<img src="./slike/top_res.png" width="500" >
-
-
-## Boljši pristop (druga možnost)
-
-*Dinamično programiranje*
-
-Oglejmo si primer grafa za vozlišče 11 ter za vozlišče 37.
-
-<img src="./slike/pod11.png" width="100" >
-<img src="./slike/pod37.png" width="100" >
-
-Opazimo, da je graf za vozlišče 11 podgraf grafa za vozlišče 37. Če si nato ogledamo še grafa za vozišči 37 in 4, opazimo, da je graf za vozlišče 37 podgraf grafa za vozlišče 4.
-
-<img src="./slike/pod37.png" width="115" >
-<img src="./slike/pod4.png" width="200" >
-
-Opazimo, da nekatere dele obravnavamo večkrat. Že pridobljene podatke za podprimere bi želeli uporabiti za nadaljno obravnavo večjih primerov (npr. podatek o najdaljši poti v grafu 37 želimo nadalje porabiti za izračun najdaljše poti za graf 4). Zato nas pri iskanju najdaljše poti v grafu zanima, ali obstajajo kakšni podprimeri, katerih podatke lahko shranimo in kasneje ponovno uporabimo, s čemer bi posledično privarčevali čas.
-
-Najprej se moramo vprašati, kateri je naš najosnovnejši primer. To je vedno celota, ki ima najmanj izhodnih povezav. Ker obravnavamo aciklične usmerjene grafe, vemo, da obstaja vsaj eno vozlišče brez izhodnih povezav. V našem primeru je to vozlišče 1. Ker vemo, da tako vozlišče nima izhodnih povezav, vemo zagotovo, da bo število poti skozi tako vozlišče enako 0.
-
-<img src="./slike/dol1.png" width="70" >
-
-Vsako vozlišče, ki kaže v najosnovnejšo enoto, jo lahko ponovno uporabi. Vrednost tega vozlišča bo `vrednost najosnovnejše enote + razdalja med najosnovnejšo enoto in trenutnim vozliščem`. Ker imamo neotežen graf, bo ta razdalja med poljubnima sosednima vozliščema enaka `1`.
-
-<img src="./slike/dol2.png" width="200" >
-
-*Oglejmo si splošnejši primer:*
-###### Pridobljeno s (Longest path in a Directed Acyclic graph | Dynamic Programming | GeeksforGeeks, 20. 11, 2020)
-
-<img src="./slike/dol3.png" width="300" >
-
-Zanima nas najdaljša pot iz vozlišča `a`. Vozlišče `a` lahko dostopa do podatkov za dolžine najdaljših poti skozi njegove sinove `b`, `c` in `e`. Za vozlišče `e` ne vemo nič o njegovih potomcih, vemo le, da je najdaljša pot skozenj enaka `x`. Dolžino najdaljše poti skozi poljubno vozlišče `i` označimo z `dol(i)`. Vemo, da je `dol(b) = 0`, `dol(c) = 1 + dol(d) = 1 + 0 = 1` ter `dol(e) = x`. Ker želimo, da je dolžina skozi vozlišče `a` največja, lahko kar zapišemo `dol(a) = 1 + max(dol(b), dol(c), dol(e)) = 1 + max(0, 1, x)`.
-
-
-### Časovna zahtevnost
-Časovna zahtevnost tega algoritma je `O(V)`, kjer je `V = število vozlišč`, saj vsako vozlišče obiščemo samo enkrat.
-
+Iskanje najdaljše poti je analogno iskanju najkrajše poti. Edina razlika je, da na vsakem koraku izberemo najdaljšo pot do nekega križišča namesto najkrajše (tj. vse `min()` nadomestimo z `max()`). Implementacijo prepustimo bralcu za vajo.
 
 
 ---
